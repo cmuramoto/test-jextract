@@ -1,0 +1,2 @@
+data/keys filter=lfs diff=lfs merge=lfs -text
+data/trie filter=lfs diff=lfs merge=lfs -text

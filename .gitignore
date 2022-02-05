@@ -5,4 +5,4 @@ bin
 native/trie.o
 native/bench
 native/bench.shared
-data
+#data
