@@ -10,7 +10,7 @@ import jdk.incubator.foreign.MemorySegment;
 
 public class ReaderNative extends BaseReader {
 
-	static final double CALL_OVERHEAD = 8.91989021d;
+	static final double CALL_OVERHEAD = 18.96d;
 
 	@Override
 	void seek(MemorySegment trie, MemorySegment ms, int len, long ct) {

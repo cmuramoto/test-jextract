@@ -4,6 +4,7 @@ import static jdk.incubator.foreign.ValueLayout.JAVA_BYTE;
 import static trie.asm.trie_h.noop;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 import jdk.incubator.foreign.MemorySegment;
 
@@ -31,7 +32,7 @@ public class EstimateCallOverhead extends BaseReader {
 		}
 		var dq = (double) (System.nanoTime() - now);
 
-		System.out.printf("[%s](read) lines: %d. took: %.2f. minus count: %.2f. ns/call: %.2f. ns/call(-ct): %.2f\n", lines, dq, dq - ct, dq / lines, (dq - ct) / lines);
+		System.out.printf("[%s](read) lines: %d. took: %.2f. minus count: %.2f. ns/call: %.2f. ns/call(-ct): %.2f\n", LocalDateTime.now(), lines, dq, dq - ct, dq / lines, (dq - ct) / lines);
 	}
 
 	public static void main(String[] args) throws IOException {
