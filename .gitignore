@@ -1,0 +1,8 @@
+bin
+.classpath
+.project
+.settings
+native/trie.o
+native/bench
+native/bench.shared
+data
