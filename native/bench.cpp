@@ -1,10 +1,7 @@
 #include <unistd.h>
-#include <fcntl.h>
+ #include <fcntl.h>
 #include <sys/time.h>
 #include <cstdio>
-#include <cstring>
-#include <cstddef> // for ternary search tree
-#include <vector>
 #include <string>
 
 typedef unsigned long u64;
