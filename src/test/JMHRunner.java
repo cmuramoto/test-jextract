@@ -8,7 +8,7 @@ public class JMHRunner {
 
 	public static void main(String[] args) throws RunnerException {
 		var opts = new OptionsBuilder() //
-				.include("Reader*") //
+				.include("Reader*|Estimate*") //
 				.forks(1) //
 				.warmupForks(1) //
 				.warmupIterations(3) //
