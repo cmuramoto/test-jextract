@@ -6,36 +6,39 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.VarHandle;
 import java.nio.ByteOrder;
 import jdk.incubator.foreign.*;
-import static jdk.incubator.foreign.ValueLayout.*;
+import static jdk.incubator.foreign.CLinker.*;
 class constants$0 {
 
-    static final FunctionDescriptor find_rel$FUNC = FunctionDescriptor.of(Constants$root.C_INT$LAYOUT,
-        Constants$root.C_LONG_LONG$LAYOUT,
-        Constants$root.C_LONG_LONG$LAYOUT,
-        Constants$root.C_LONG_LONG$LAYOUT,
-        Constants$root.C_LONG_LONG$LAYOUT,
-        Constants$root.C_LONG_LONG$LAYOUT
+    static final FunctionDescriptor find_rel$FUNC = FunctionDescriptor.of(C_INT,
+        C_LONG,
+        C_LONG,
+        C_LONG,
+        C_LONG,
+        C_LONG
     );
     static final MethodHandle find_rel$MH = RuntimeHelper.downcallHandle(
-        "find_rel",
+        trie_h.LIBRARIES, "find_rel",
+        "(JJJJJ)I",
         constants$0.find_rel$FUNC, false
     );
-    static final FunctionDescriptor find_abs$FUNC = FunctionDescriptor.of(Constants$root.C_INT$LAYOUT,
-        Constants$root.C_LONG_LONG$LAYOUT,
-        Constants$root.C_LONG_LONG$LAYOUT,
-        Constants$root.C_INT$LAYOUT
+    static final FunctionDescriptor find_abs$FUNC = FunctionDescriptor.of(C_INT,
+        C_LONG,
+        C_LONG,
+        C_INT
     );
     static final MethodHandle find_abs$MH = RuntimeHelper.downcallHandle(
-        "find_abs",
+        trie_h.LIBRARIES, "find_abs",
+        "(JJI)I",
         constants$0.find_abs$FUNC, false
     );
-    static final FunctionDescriptor noop$FUNC = FunctionDescriptor.of(Constants$root.C_INT$LAYOUT,
-        Constants$root.C_LONG_LONG$LAYOUT,
-        Constants$root.C_LONG_LONG$LAYOUT,
-        Constants$root.C_INT$LAYOUT
+    static final FunctionDescriptor noop$FUNC = FunctionDescriptor.of(C_INT,
+        C_LONG,
+        C_LONG,
+        C_INT
     );
     static final MethodHandle noop$MH = RuntimeHelper.downcallHandle(
-        "noop",
+        trie_h.LIBRARIES, "noop",
+        "(JJI)I",
         constants$0.noop$FUNC, false
     );
 }

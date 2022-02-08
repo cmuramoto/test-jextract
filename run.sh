@@ -1,6 +1,6 @@
 #!/bin/bash
 
-JAVA=/opt/java/jdk-19/bin/java
+JAVA=/opt/java/panama/bin/java
 PS3='Select Mode: '
 options=("MemorySegments" "Unsafe" "Native" "JMH")
 

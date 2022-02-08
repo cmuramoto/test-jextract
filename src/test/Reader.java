@@ -1,8 +1,5 @@
 package test;
 
-import static jdk.incubator.foreign.ValueLayout.JAVA_BYTE;
-import static jdk.incubator.foreign.ValueLayout.JAVA_INT;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.concurrent.TimeUnit;
@@ -14,6 +11,7 @@ import org.openjdk.jmh.annotations.OperationsPerInvocation;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.infra.Blackhole;
 
+import jdk.incubator.foreign.MemoryAccess;
 import jdk.incubator.foreign.MemorySegment;
 
 public class Reader extends BaseReader {
@@ -63,11 +61,11 @@ public class Reader extends BaseReader {
 	}
 
 	static int base(MemorySegment ms, long offset) {
-		return ms.get(JAVA_INT, offset << 3);
+		return MemoryAccess.getIntAtOffset(ms, offset << 3);
 	}
 
 	static int check(MemorySegment ms, long offset) {
-		return ms.get(JAVA_INT, 4 + (offset << 3));
+		return MemoryAccess.getIntAtOffset(ms, 4 + (offset << 3));
 	}
 
 	static long lookup(MemorySegment array, MemorySegment data, int pos, int end) {
@@ -75,7 +73,7 @@ public class Reader extends BaseReader {
 		var to = 0L;
 
 		while (pos < end) {
-			to = u64(base(array, from)) ^ u32(data.get(JAVA_BYTE, pos));
+			to = u64(base(array, from)) ^ u32(MemoryAccess.getByteAtOffset(data, pos));
 			if (check(array, to) != from) {
 				return ABSENT;
 			}

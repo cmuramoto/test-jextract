@@ -1,6 +1,5 @@
 package test;
 
-import static jdk.incubator.foreign.ValueLayout.JAVA_BYTE;
 import static trie.asm.trie_h.noop;
 
 import java.io.IOException;
@@ -19,7 +18,7 @@ public class EstimateCallOverhead extends BaseReader {
 		var now = System.nanoTime();
 
 		for (var i = 0; i < len; i++) {
-			if (ms.get(JAVA_BYTE, i) == '\n') {
+			if (JMHState.U.getByte(data + i) == '\n') {
 				var q = noop(addr, data + start, i - start);
 
 				if (q != 0) {
