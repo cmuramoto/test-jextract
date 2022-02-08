@@ -5,20 +5,29 @@ import static jdk.incubator.foreign.ValueLayout.JAVA_INT;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.concurrent.TimeUnit;
+
+import org.openjdk.jmh.annotations.Benchmark;
+import org.openjdk.jmh.annotations.BenchmarkMode;
+import org.openjdk.jmh.annotations.Mode;
+import org.openjdk.jmh.annotations.OperationsPerInvocation;
+import org.openjdk.jmh.annotations.OutputTimeUnit;
+import org.openjdk.jmh.infra.Blackhole;
 
 import jdk.incubator.foreign.MemorySegment;
 
 public class Reader extends BaseReader {
 
 	@Override
-	void seek(MemorySegment trie, MemorySegment data, int len, long ct) {
+	void seek(MemorySegment trie, MemorySegment keys, int len, long ct) {
 		var start = 0;
 		var lines = 0;
 		var now = System.nanoTime();
+		var keyAddr = keys.address().toRawLongValue();
 
 		for (var i = 0; i < len; i++) {
-			if (data.get(JAVA_BYTE, i) == '\n') {
-				var q = lookup(trie, data, start, i);
+			if (JMHState.U.getByte(keyAddr + i) == '\n') {
+				var q = lookup(trie, keys, start, i);
 
 				if ((q & ABSENT_OR_NO_VALUE) == 0) {
 					lines++;
@@ -52,15 +61,15 @@ public class Reader extends BaseReader {
 		return (int) v;
 	}
 
-	int base(MemorySegment ms, long offset) {
+	static int base(MemorySegment ms, long offset) {
 		return ms.get(JAVA_INT, offset << 3);
 	}
 
-	int check(MemorySegment ms, long offset) {
+	static int check(MemorySegment ms, long offset) {
 		return ms.get(JAVA_INT, 4 + (offset << 3));
 	}
 
-	long lookup(MemorySegment array, MemorySegment data, int pos, int end) {
+	static long lookup(MemorySegment array, MemorySegment data, int pos, int end) {
 		var from = 0L;
 		var to = 0L;
 
@@ -79,6 +88,29 @@ public class Reader extends BaseReader {
 			return NO_VALUE;
 		} else {
 			return base(array, b);
+		}
+	}
+
+	@Benchmark
+	@OutputTimeUnit(TimeUnit.NANOSECONDS)
+	@OperationsPerInvocation(10_000_000)
+	@BenchmarkMode(Mode.AverageTime)
+	public void run(JMHState state, Blackhole bh) {
+		var start = 0;
+		var lines = 0;
+		var trie = state.trie;
+		var keys = state.keys;
+		var keyAddr = keys.address().toRawLongValue();
+		var len = (int) keys.byteSize();
+		for (var i = 0; i < len; i++) {
+			if (JMHState.U.getByte(keyAddr + i) == '\n') {
+				var q = lookup(trie, keys, start, i);
+				bh.consume(q);
+				if ((q & ABSENT_OR_NO_VALUE) == 0) {
+					lines++;
+				}
+				start = i + 1;
+			}
 		}
 	}
 }
