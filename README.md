@@ -28,12 +28,12 @@ Standard Bencharks (MemorySegments, Unsafe and Native) should output something l
 
 Where:
 
-1. qure time: the total time in nanoseconds to perform all 10mil lookups. This includes the estimate extra overhead of reading the keys file byte by byte and finding the line breaks in order to perform the queries
-2. dq - ct: query time minus the estimate overhead for finding line breaks
-3. ns/q: (query time)/lines - Average lookup cost
-4. ns/q(-ct): (dq -ct)/lines - Average lookup cost, w/out line break scan overhead
-5. ns/q(-ovh): (query time - lines*(native call overhead) (0 for non-native, 18ns for native))/lines - Average lookup cost, w/out native call overhead
-6. ns/q(-ovh - ct): (dq -ct - lines*(native call overhead))/lines - Average lookup cost, w/out neither native call overhead nor line break scan overhead. This should be close to the measure of pure lookup algorithimic performance
+1. **query time**: the total time in nanoseconds to perform all 10mil lookups. This includes the estimate extra overhead of reading the keys file byte by byte and finding the line breaks in order to perform the queries
+2. **dq - ct**: query time minus the estimate overhead for finding line breaks
+3. **ns/q**: (query time)/lines - Average lookup cost
+4. **ns/q(-ct)**: (dq -ct)/lines - Average lookup cost, w/out line break scan overhead
+5. **ns/q(-ovh)**: (query time - lines*(native call overhead) (0 for non-native, 18ns for native))/lines - Average lookup cost, w/out native call overhead
+6. **ns/q(-ovh - ct)**: (dq -ct - lines*(native call overhead))/lines - Average lookup cost, w/out neither native call overhead nor line break scan overhead. This should be close to the measure of pure lookup algorithimic performance
 
 JMH benchmarks are performed with @BenchmarkMode(Mode.AverageTime) to mirror standard benchmarks and output should be similar to ns/q, since the samplings do not factor out runtime overhead.
 
