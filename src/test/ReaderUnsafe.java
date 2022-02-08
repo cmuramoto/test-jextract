@@ -41,6 +41,7 @@ public class ReaderUnsafe extends BaseReader {
 	}
 
 	public static void main(String[] args) throws IOException {
+		JMHState.VERBOSE = true;
 		new ReaderUnsafe().run();
 	}
 

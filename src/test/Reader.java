@@ -43,6 +43,7 @@ public class Reader extends BaseReader {
 	}
 
 	public static void main(String[] args) throws IOException {
+		JMHState.VERBOSE = true;
 		new Reader().run();
 	}
 

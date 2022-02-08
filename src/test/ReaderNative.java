@@ -45,6 +45,7 @@ public class ReaderNative extends BaseReader {
 	}
 
 	public static void main(String[] args) throws IOException {
+		JMHState.VERBOSE = true;
 		new ReaderNative().run();
 	}
 
