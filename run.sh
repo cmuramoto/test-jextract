@@ -2,7 +2,7 @@
 
 JAVA=/opt/java/panama/bin/java
 PS3='Select Mode: '
-options=("MemorySegments" "Unsafe" "Native" "JMH")
+options=("MemorySegments" "Unsafe" "Native" "Noop" "JMH")
 
 select opt in "${options[@]}"
 do
@@ -17,6 +17,10 @@ do
             ;;
         "Native")
             main_class="test.ReaderNative"
+            break
+            ;;
+        "Noop")
+            main_class="test.EstimateCallOverhead"
             break
             ;;
         "JMH")
