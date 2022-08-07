@@ -1,8 +1,8 @@
 #!/bin/bash
 
-JAVA=/opt/java/jdk-19/bin/java
+JAVA=/opt/java/latest_18/bin/java
 PS3='Select Mode: '
-options=("MemorySegments" "Unsafe" "Native" "Noop" "JMH")
+options=("MemorySegments" "Unsafe" "UnsafeAlt" "Native" "NativeAlt" "Noop" "JMH")
 
 select opt in "${options[@]}"
 do
@@ -15,8 +15,16 @@ do
             main_class="test.ReaderUnsafe"
             break
             ;;
+        "UnsafeAlt")
+            main_class="test.ReaderUnsafeAlt"
+            break
+            ;;
         "Native")
             main_class="test.ReaderNative"
+            break
+            ;;
+        "NativeAlt")
+            main_class="test.ReaderNativeAlt"
             break
             ;;
         "Noop")
