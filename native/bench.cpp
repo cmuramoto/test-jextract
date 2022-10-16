@@ -76,7 +76,7 @@ int main(int len,char** args){
 
     std::fprintf (stderr, "key_size: %zu. trie_size: %zu\n",size,trie_size);
 
-    for(int i=0;i<5;i++){
+    for(int i=0;i<10;i++){
         auto ks = keys;
     	run(static_cast<void*>(trie), ks, size);
     }
