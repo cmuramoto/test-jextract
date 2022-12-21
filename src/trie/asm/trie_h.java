@@ -2,55 +2,65 @@
 
 package trie.asm;
 
+import java.lang.foreign.ValueLayout.OfAddress;
+import java.lang.foreign.ValueLayout.OfByte;
+import java.lang.foreign.ValueLayout.OfDouble;
+import java.lang.foreign.ValueLayout.OfFloat;
+import java.lang.foreign.ValueLayout.OfInt;
+import java.lang.foreign.ValueLayout.OfLong;
+import java.lang.foreign.ValueLayout.OfShort;
 import java.lang.invoke.MethodHandle;
-import java.lang.invoke.VarHandle;
-import java.nio.ByteOrder;
-import jdk.incubator.foreign.*;
-import static jdk.incubator.foreign.ValueLayout.*;
-public class trie_h  {
 
-    /* package-private */ trie_h() {}
-    public static OfByte C_CHAR = Constants$root.C_CHAR$LAYOUT;
-    public static OfShort C_SHORT = Constants$root.C_SHORT$LAYOUT;
-    public static OfInt C_INT = Constants$root.C_INT$LAYOUT;
-    public static OfLong C_LONG = Constants$root.C_LONG_LONG$LAYOUT;
-    public static OfLong C_LONG_LONG = Constants$root.C_LONG_LONG$LAYOUT;
-    public static OfFloat C_FLOAT = Constants$root.C_FLOAT$LAYOUT;
-    public static OfDouble C_DOUBLE = Constants$root.C_DOUBLE$LAYOUT;
-    public static OfAddress C_POINTER = Constants$root.C_POINTER$LAYOUT;
-    public static MethodHandle find_rel$MH() {
-        return RuntimeHelper.requireNonNull(constants$0.find_rel$MH,"find_rel");
-    }
-    public static int find_rel ( long array,  long key,  long from,  long pos,  long len) {
-        var mh$ = RuntimeHelper.requireNonNull(constants$0.find_rel$MH, "find_rel");
-        try {
-            return (int)mh$.invokeExact(array, key, from, pos, len);
-        } catch (Throwable ex$) {
-            throw new AssertionError("should not reach here", ex$);
-        }
-    }
-    public static MethodHandle find_abs$MH() {
-        return RuntimeHelper.requireNonNull(constants$0.find_abs$MH,"find_abs");
-    }
-    public static int find_abs ( long array,  long key,  int len) {
-        var mh$ = RuntimeHelper.requireNonNull(constants$0.find_abs$MH, "find_abs");
-        try {
-            return (int)mh$.invokeExact(array, key, len);
-        } catch (Throwable ex$) {
-            throw new AssertionError("should not reach here", ex$);
-        }
-    }
-    public static MethodHandle noop$MH() {
-        return RuntimeHelper.requireNonNull(constants$0.noop$MH,"noop");
-    }
-    public static int noop ( long array,  long key,  int len) {
-        var mh$ = RuntimeHelper.requireNonNull(constants$0.noop$MH, "noop");
-        try {
-            return (int)mh$.invokeExact(array, key, len);
-        } catch (Throwable ex$) {
-            throw new AssertionError("should not reach here", ex$);
-        }
-    }
+public class trie_h {
+
+	public static final OfByte C_CHAR = Constants$root.C_CHAR$LAYOUT;
+	public static final OfShort C_SHORT = Constants$root.C_SHORT$LAYOUT;
+	public static final OfInt C_INT = Constants$root.C_INT$LAYOUT;
+	public static final OfLong C_LONG = Constants$root.C_LONG_LONG$LAYOUT;
+	public static final OfLong C_LONG_LONG = Constants$root.C_LONG_LONG$LAYOUT;
+	public static final OfFloat C_FLOAT = Constants$root.C_FLOAT$LAYOUT;
+	public static final OfDouble C_DOUBLE = Constants$root.C_DOUBLE$LAYOUT;
+	public static final OfAddress C_POINTER = Constants$root.C_POINTER$LAYOUT;
+
+	public static int find_abs(long array, long key, int len) {
+		var mh$ = RuntimeHelper.requireNonNull(constants$0.find_abs$MH, "find_abs");
+		try {
+			return (int) mh$.invokeExact(array, key, len);
+		} catch (Throwable ex$) {
+			throw new AssertionError("should not reach here", ex$);
+		}
+	}
+
+	public static MethodHandle find_abs$MH() {
+		return RuntimeHelper.requireNonNull(constants$0.find_abs$MH, "find_abs");
+	}
+
+	public static int find_rel(long array, long key, long from, long pos, long len) {
+		var mh$ = RuntimeHelper.requireNonNull(constants$0.find_rel$MH, "find_rel");
+		try {
+			return (int) mh$.invokeExact(array, key, from, pos, len);
+		} catch (Throwable ex$) {
+			throw new AssertionError("should not reach here", ex$);
+		}
+	}
+
+	public static MethodHandle find_rel$MH() {
+		return RuntimeHelper.requireNonNull(constants$0.find_rel$MH, "find_rel");
+	}
+
+	public static int noop(long array, long key, int len) {
+		var mh$ = RuntimeHelper.requireNonNull(constants$0.noop$MH, "noop");
+		try {
+			return (int) mh$.invokeExact(array, key, len);
+		} catch (Throwable ex$) {
+			throw new AssertionError("should not reach here", ex$);
+		}
+	}
+
+	public static MethodHandle noop$MH() {
+		return RuntimeHelper.requireNonNull(constants$0.noop$MH, "noop");
+	}
+
+	/* package-private */ trie_h() {
+	}
 }
-
-

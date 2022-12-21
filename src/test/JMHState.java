@@ -1,7 +1,10 @@
 package test;
 
+import static test.UnalignedMemoryAccess.map;
+
 import java.io.IOException;
-import java.nio.channels.FileChannel.MapMode;
+import java.lang.foreign.MemorySegment;
+import java.lang.foreign.MemorySession;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,9 +15,6 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.TearDown;
-
-import jdk.incubator.foreign.MemorySegment;
-import jdk.incubator.foreign.ResourceScope;
 
 @State(Scope.Benchmark)
 public class JMHState {
@@ -33,59 +33,6 @@ public class JMHState {
 		}
 	}
 
-	Path keysPath = Paths.get("data/keys");
-
-	Path triePath = keysPath.resolveSibling("trie");
-
-	MemorySegment keys;
-
-	MemorySegment trie;
-
-	long countTime;
-
-	@Setup(Level.Trial)
-	public void setup() throws IOException {
-		if (keys == null || trie == null) {
-			keys = load(keysPath, true);
-			trie = load(triePath, true);
-
-			countTime = IntStream.range(0, 10).mapToLong(v -> count(keys)).min().orElseThrow();
-
-			if (VERBOSE) {
-				System.out.printf("(count) lines: %d. count time: %d.\n", 10_000_000, countTime);
-			}
-		}
-	}
-
-	@TearDown(Level.Trial)
-	public void release() {
-		if (keys != null) {
-			keys.scope().close();
-		}
-
-		if (trie != null) {
-			trie.scope().close();
-		}
-
-		if (VERBOSE) {
-			System.out.println("Closed scopes");
-		}
-	}
-
-	MemorySegment load(Path p, boolean copy) throws IOException {
-		var scope = ResourceScope.newSharedScope();
-		var ms = MemorySegment.mapFile(p, 0, Files.size(p), MapMode.READ_WRITE, scope);
-		if (copy) {
-			try (scope) {
-				var locked = MemorySegment.allocateNative(ms.byteSize(), 4096, ResourceScope.newSharedScope());
-				locked.copyFrom(ms);
-				return locked;
-			}
-		} else {
-			return ms;
-		}
-	}
-
 	static final long count(MemorySegment keys) {
 		var lines = 0;
 		var now = System.nanoTime();
@@ -99,5 +46,58 @@ public class JMHState {
 		var cl = System.nanoTime() - now;
 
 		return cl;
+	}
+
+	Path keysPath = Paths.get("data/keys");
+
+	Path triePath = keysPath.resolveSibling("trie");
+
+	MemorySegment keys;
+
+	MemorySegment trie;
+
+	long countTime;
+
+	MemorySegment load(Path p, boolean copy) throws IOException {
+		var scope = MemorySession.openShared();
+		var ms = map(p, 0, Files.size(p), scope);
+		if (copy) {
+			try (scope) {
+				var locked = MemorySegment.allocateNative(ms.byteSize(), 4096, MemorySession.openShared());
+				locked.copyFrom(ms);
+				return locked;
+			}
+		} else {
+			return ms;
+		}
+	}
+
+	@TearDown(Level.Trial)
+	public void release() {
+		if (keys != null) {
+			keys.session().close();
+		}
+
+		if (trie != null) {
+			trie.session().close();
+		}
+
+		if (VERBOSE) {
+			System.out.println("Closed scopes");
+		}
+	}
+
+	@Setup(Level.Trial)
+	public void setup() throws IOException {
+		if (keys == null || trie == null) {
+			keys = load(keysPath, true);
+			trie = load(triePath, true);
+
+			countTime = IntStream.range(0, 10).mapToLong(v -> count(keys)).min().orElseThrow();
+
+			if (VERBOSE) {
+				System.out.printf("(count) lines: %d. count time: %d.\n", 10_000_000, countTime);
+			}
+		}
 	}
 }

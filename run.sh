@@ -1,8 +1,8 @@
 #!/bin/bash
 
-JAVA=/opt/java/latest_18/bin/java
+JAVA=/opt/java/latest_19/bin/java
 PS3='Select Mode: '
-options=("MemorySegments" "Unsafe" "Unsafe(Alt)" "Native(Panama)" "Native(Panam-Alt)" "Native(Nalim-Alt)" "Noop" "JMH")
+options=("MemorySegments" "Unsafe" "Unsafe(Alt)" "Native(Panama)" "Native(Panama-Alt)" "Native(Nalim)" "Noop" "JMH")
 
 select opt in "${options[@]}"
 do
@@ -27,8 +27,8 @@ do
             main_class="test.ReaderNativeAlt"
             break
         ;;
-        "Native(Nalim-Alt)")
-            main_class="test.ReaderNativeAltNalim"
+        "Native(Nalim)")
+            main_class="test.ReaderNativeNalim"
             break
         ;;
         "Noop")
@@ -50,9 +50,10 @@ echo "Running $main_class"
 
 
 $JAVA \
+--enable-preview \
 -XX:+UnlockExperimentalVMOptions -XX:+EnableJVMCI -XX:+UseSerialGC -XX:+AlwaysPreTouch \
--Xms64m -Xmx64m -XX:MaxDirectMemorySize=2g \
---enable-native-access=ALL-UNNAMED --add-modules jdk.incubator.foreign,jdk.internal.vm.ci \
+-Xms64m -Xmx64m -XX:LoopUnrollLimit=0 -XX:MaxDirectMemorySize=2g \
+--enable-native-access=ALL-UNNAMED --add-modules jdk.internal.vm.ci \
 --add-opens java.base/jdk.internal.misc=ALL-UNNAMED \
 --add-exports jdk.internal.vm.ci/jdk.vm.ci.code=ALL-UNNAMED      \
 --add-exports jdk.internal.vm.ci/jdk.vm.ci.code.site=ALL-UNNAMED \
