@@ -2,8 +2,8 @@ package test;
 
 import java.io.IOException;
 import java.io.UncheckedIOException;
+import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
-import java.lang.foreign.MemorySession;
 import java.lang.foreign.ValueLayout;
 import java.lang.foreign.ValueLayout.OfBoolean;
 import java.lang.foreign.ValueLayout.OfByte;
@@ -51,30 +51,30 @@ public interface UnalignedMemoryAccess {
 	}
 
 	static MemorySegment map(Path path, long base, long size) {
-		return map(path, base, size, MemorySession.openShared());
+		return map(path, base, size, Arena.openShared());
 	}
 
-	static MemorySegment map(Path path, long base, long size, MemorySession ms) {
+	static MemorySegment map(Path path, long base, long size, Arena ms) {
 		return map(path, base, size, ms, true);
 	}
 
 	@SuppressWarnings("preview")
-	static MemorySegment map(Path path, long base, long size, MemorySession ms, boolean closeOnFail) {
+	static MemorySegment map(Path path, long base, long size, Arena ms, boolean closeOnFail) {
 		try (var fc = FileChannel.open(path, StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.READ)) {
-			return fc.map(MapMode.READ_WRITE, base, size, ms);
+			return fc.map(MapMode.READ_WRITE, base, size, ms.scope());
 		} catch (IOException e) {
-			if (closeOnFail && ms.isCloseable()) {
+			if (closeOnFail) {
 				ms.close();
 			}
 			throw new UncheckedIOException(e);
 		}
 	}
 
-	static MemorySegment map(Path path, long base, MemorySession ms) {
+	static MemorySegment map(Path path, long base, Arena ms) {
 		return map(path, base, ms, true);
 	}
 
-	static MemorySegment map(Path path, long base, MemorySession ms, boolean closeOnFail) {
+	static MemorySegment map(Path path, long base, Arena ms, boolean closeOnFail) {
 		try {
 			return map(path, base, Files.size(path), ms, closeOnFail);
 		} catch (IOException e) {

@@ -27,8 +27,8 @@ public class EstimateCallOverhead extends BaseReader {
 	@BenchmarkMode(Mode.AverageTime)
 	public void run(JMHState state, Blackhole bh) {
 		var start = 0;
-		var addr = state.trie.address().toRawLongValue();
-		var keyAddr = state.keys.address().toRawLongValue();
+		var addr = state.trie.address();
+		var keyAddr = state.keys.address();
 
 		for (var i = 0; i < 10_000_000; i++) {
 			bh.consume(noop(addr, keyAddr + start, i - start));
@@ -39,8 +39,8 @@ public class EstimateCallOverhead extends BaseReader {
 	void seek(MemorySegment trie, MemorySegment ms, int len, long ct) {
 		var start = 0;
 		var lines = 0;
-		var addr = trie.address().toRawLongValue();
-		var data = ms.address().toRawLongValue();
+		var addr = trie.address();
+		var data = ms.address();
 		var now = System.nanoTime();
 
 		for (var i = 0; i < len; i++) {

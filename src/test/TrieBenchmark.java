@@ -6,9 +6,9 @@ import static test.UnalignedMemoryAccess.map;
 import static trie.asm.trie_h.find_abs;
 
 import java.io.IOException;
-import java.lang.foreign.MemoryAddress;
+import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
-import java.lang.foreign.MemorySession;
+import java.lang.foreign.SegmentScope;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.file.Files;
@@ -39,15 +39,15 @@ import jdk.internal.misc.Unsafe;
 public class TrieBenchmark {
 
 	static class AddressReader {
-		int base(MemoryAddress ms, long offset) {
+		int base(MemorySegment ms, long offset) {
 			return ms.get(JAVA_INT, offset << 3);
 		}
 
-		int check(MemoryAddress ms, long offset) {
+		int check(MemorySegment ms, long offset) {
 			return ms.get(JAVA_INT, 4 + (offset << 3));
 		}
 
-		long lookup(MemoryAddress array, MemoryAddress data, int pos, int end) {
+		long lookup(MemorySegment array, MemorySegment data, int pos, int end) {
 			var from = 0L;
 			var to = 0L;
 
@@ -69,7 +69,7 @@ public class TrieBenchmark {
 			}
 		}
 
-		public long seek(MemoryAddress trie, MemoryAddress data, int len) {
+		public long seek(MemorySegment trie, MemorySegment data, int len) {
 			var start = 0;
 			var lines = 0;
 
@@ -139,11 +139,11 @@ public class TrieBenchmark {
 
 	static class NativeReader {
 
-		int seek(MemoryAddress trie, MemoryAddress data, int len) {
+		int seek(MemorySegment trie, MemorySegment data, int len) {
 			var start = 0;
 			var lines = 0;
-			var trieBase = trie.toRawLongValue();
-			var dataBase = data.toRawLongValue();
+			var trieBase = trie.address();
+			var dataBase = data.address();
 
 			for (var i = 0; i < len; i++) {
 				if (data.get(JAVA_BYTE, i) == '\n') {
@@ -387,11 +387,11 @@ public class TrieBenchmark {
 
 	static MemorySegment load(Path p, boolean copy) {
 		try {
-			var scope = MemorySession.openShared();
+			var scope = Arena.openShared();
 			var ms = map(p, 0, Files.size(p), scope);
 			if (copy) {
 				try (scope) {
-					var locked = MemorySegment.allocateNative(ms.byteSize(), 4096, MemorySession.global());
+					var locked = MemorySegment.allocateNative(ms.byteSize(), 4096, SegmentScope.global());
 					locked.copyFrom(ms);
 					return locked;
 				}
@@ -416,7 +416,7 @@ public class TrieBenchmark {
 
 	@Benchmark
 	public long address_seek() {
-		return new AddressReader().seek(trie.address(), data.address(), (int) data.byteSize());
+		return new AddressReader().seek(trie, data, (int) data.byteSize());
 	}
 
 	@Benchmark
@@ -426,12 +426,12 @@ public class TrieBenchmark {
 
 	@Benchmark
 	public long native_seek() {
-		return new NativeReader().seek(trie.address(), data.address(), (int) data.byteSize());
+		return new NativeReader().seek(trie, data, (int) data.byteSize());
 	}
 
 	@Benchmark
 	public long native_seek_alt() {
-		return new NativeReaderAlt().seek(trie.address().toRawLongValue(), data.address().toRawLongValue(), (int) data.byteSize());
+		return new NativeReaderAlt().seek(trie.address(), data.address(), (int) data.byteSize());
 	}
 
 	@Benchmark
@@ -441,11 +441,11 @@ public class TrieBenchmark {
 
 	@Benchmark
 	public long unsafe_seek() {
-		return new ReaderUnsafe().seek(trie.address().toRawLongValue(), data.address().toRawLongValue(), (int) data.byteSize());
+		return new ReaderUnsafe().seek(trie.address(), data.address(), (int) data.byteSize());
 	}
 
 	@Benchmark
 	public long unsafe_seek_alt() {
-		return new ReaderUnsafeAlt().seek(trie.address().toRawLongValue(), data.address().toRawLongValue(), (int) data.byteSize());
+		return new ReaderUnsafeAlt().seek(trie.address(), data.address(), (int) data.byteSize());
 	}
 }

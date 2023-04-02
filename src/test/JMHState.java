@@ -3,8 +3,8 @@ package test;
 import static test.UnalignedMemoryAccess.map;
 
 import java.io.IOException;
+import java.lang.foreign.Arena;
 import java.lang.foreign.MemorySegment;
-import java.lang.foreign.MemorySession;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -36,7 +36,7 @@ public class JMHState {
 	static final long count(MemorySegment keys) {
 		var lines = 0;
 		var now = System.nanoTime();
-		var addr = keys.address().toRawLongValue();
+		var addr = keys.address();
 		int len = (int) keys.byteSize();
 		for (var i = 0; i < len; i++) {
 			if (U.getByte(addr + i) == '\n') {
@@ -59,11 +59,11 @@ public class JMHState {
 	long countTime;
 
 	MemorySegment load(Path p, boolean copy) throws IOException {
-		var scope = MemorySession.openShared();
+		var scope = Arena.openShared();
 		var ms = map(p, 0, Files.size(p), scope);
 		if (copy) {
 			try (scope) {
-				var locked = MemorySegment.allocateNative(ms.byteSize(), 4096, MemorySession.openShared());
+				var locked = MemorySegment.allocateNative(ms.byteSize(), 4096, Arena.openShared().scope());
 				locked.copyFrom(ms);
 				return locked;
 			}
@@ -75,11 +75,13 @@ public class JMHState {
 	@TearDown(Level.Trial)
 	public void release() {
 		if (keys != null) {
-			keys.session().close();
+			// keys.scope().close();
+			keys = null; // TBD jdk 20 Arena
 		}
 
 		if (trie != null) {
-			trie.session().close();
+			// trie.session().close();
+			trie = null;
 		}
 
 		if (VERBOSE) {

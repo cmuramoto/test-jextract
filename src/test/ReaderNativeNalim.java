@@ -40,8 +40,8 @@ public class ReaderNativeNalim extends BaseReader {
 	@OperationsPerInvocation(10_000_000)
 	@BenchmarkMode(Mode.AverageTime)
 	public void run(JMHState state, Blackhole bh) {
-		var trie = state.trie.address().toRawLongValue();
-		var keys = state.keys.address().toRawLongValue();
+		var trie = state.trie.address();
+		var keys = state.keys.address();
 		var len = (int) state.keys.byteSize();
 		var lines = seek(trie, keys, len);
 	}
@@ -68,8 +68,8 @@ public class ReaderNativeNalim extends BaseReader {
 
 	@Override
 	void seek(MemorySegment trie, MemorySegment keys, int len, long ct) {
-		var addr = trie.address().toRawLongValue();
-		var keyAddr = keys.address().toRawLongValue();
+		var addr = trie.address();
+		var keyAddr = keys.address();
 		var now = System.nanoTime();
 		var lines = seek(addr, keyAddr, len);
 

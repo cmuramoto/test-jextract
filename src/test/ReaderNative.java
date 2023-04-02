@@ -31,8 +31,8 @@ public class ReaderNative extends BaseReader {
 	public void run(JMHState state, Blackhole bh) {
 		var start = 0;
 		var lines = 0;
-		var trie = state.trie.address().toRawLongValue();
-		var keys = state.keys.address().toRawLongValue();
+		var trie = state.trie.address();
+		var keys = state.keys.address();
 		var len = (int) state.keys.byteSize();
 		for (var i = 0; i < len; i++) {
 			if (U.getByte(keys + i) == '\n') {
@@ -50,8 +50,8 @@ public class ReaderNative extends BaseReader {
 	void seek(MemorySegment trie, MemorySegment keys, int len, long ct) {
 		var start = 0;
 		var lines = 0;
-		var addr = trie.address().toRawLongValue();
-		var keyAddr = keys.address().toRawLongValue();
+		var addr = trie.address();
+		var keyAddr = keys.address();
 		var now = System.nanoTime();
 
 		for (var i = 0; i < len; i++) {

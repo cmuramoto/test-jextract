@@ -1,6 +1,7 @@
 package test;
 
 import static java.lang.foreign.ValueLayout.JAVA_BYTE;
+import static test.JMHState.U;
 import static test.UnalignedMemoryAccess.getIntAtOffset;
 
 import java.io.IOException;
@@ -14,8 +15,6 @@ import org.openjdk.jmh.annotations.Mode;
 import org.openjdk.jmh.annotations.OperationsPerInvocation;
 import org.openjdk.jmh.annotations.OutputTimeUnit;
 import org.openjdk.jmh.infra.Blackhole;
-
-import static test.JMHState.*;
 
 public class Reader extends BaseReader {
 
@@ -78,7 +77,7 @@ public class Reader extends BaseReader {
 		var lines = 0;
 		var trie = state.trie;
 		var keys = state.keys;
-		var keyAddr = keys.address().toRawLongValue();
+		var keyAddr = keys.address();
 		var len = (int) keys.byteSize();
 		for (var i = 0; i < len; i++) {
 			if (U.getByte(keyAddr + i) == '\n') {
@@ -97,7 +96,7 @@ public class Reader extends BaseReader {
 		var start = 0;
 		var lines = 0;
 		var now = System.nanoTime();
-		var keyAddr = keys.address().toRawLongValue();
+		var keyAddr = keys.address();
 
 		for (var i = 0; i < len; i++) {
 			if (U.getByte(keyAddr + i) == '\n') {
