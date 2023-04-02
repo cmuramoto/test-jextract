@@ -15,7 +15,7 @@ public class JMHRunner {
 				.measurementIterations(3) //
 				.jvmArgs("--enable-preview", //
 						"--enable-native-access=ALL-UNNAMED", //
-						"--add-modules", "jdk.incubator.foreign,jdk.internal.vm.ci", //
+						"--add-modules", "jdk.internal.vm.ci", //
 						"--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED", //
 						"--add-exports", "jdk.internal.vm.ci/jdk.vm.ci.code=ALL-UNNAMED",
 						"--add-exports", "jdk.internal.vm.ci/jdk.vm.ci.code.site=ALL-UNNAMED",
